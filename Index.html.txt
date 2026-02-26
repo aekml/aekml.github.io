@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Utility Enterprise Directory</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+<h3>Utility Enterprise Directory</h3>
+<div>
+<button onclick="toggleAdmin()">Admin</button>
+<button onclick="toggleTheme()">Dark</button>
+</div>
+</header>
+
+<div class="container">
+
+<div class="sidebar">
+<h4>Hierarchy</h4>
+<div id="tree"></div>
+</div>
+
+<div class="content">
+
+<div class="breadcrumb" id="breadcrumb"></div>
+
+<div class="filters">
+<input id="search" placeholder="Search">
+<select id="designationFilter">
+<option value="">All</option>
+<option>Chief Engineer</option>
+<option>Superintending Engineer</option>
+<option>Divisional Officer</option>
+<option>Subdivisional Officer</option>
+<option>Section Officer</option>
+</select>
+<button onclick="exportJSON()">Export JSON</button>
+</div>
+
+<div class="grid" id="grid"></div>
+<div class="pagination" id="pagination"></div>
+
+</div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel" class="modal hidden">
+<div class="modal-content">
+<h3>Admin Panel</h3>
+
+<div id="adminList"></div>
+
+<h4>Add / Edit Officer</h4>
+
+<input id="a_name" placeholder="Name">
+<input id="a_designation" placeholder="Designation">
+<input id="a_zone" placeholder="Zone">
+<input id="a_circle" placeholder="Circle">
+<input id="a_division" placeholder="Division">
+<input id="a_subdivision" placeholder="Subdivision">
+<input id="a_section" placeholder="Section">
+<input id="a_mobile" placeholder="Mobile">
+<input id="a_email" placeholder="Email">
+
+<button onclick="saveOfficer()">Save</button>
+<button onclick="resetForm()">Clear</button>
+<button onclick="downloadUpdatedJSON()">Download Updated JSON</button>
+<button onclick="toggleAdmin()">Close</button>
+
+</div>
+</div>
+
+<script src="app.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

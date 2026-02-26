@@ -1,0 +1,108 @@
+body{
+margin:0;
+font-family:Segoe UI,Arial;
+background:#f4f6f8;
+}
+
+header{
+background:#0d47a1;
+color:white;
+padding:12px 20px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.container{
+display:flex;
+height:calc(100vh - 60px);
+}
+
+.sidebar{
+width:280px;
+overflow:auto;
+padding:15px;
+border-right:1px solid #ddd;
+background:white;
+}
+
+.content{
+flex:1;
+padding:20px;
+overflow:auto;
+}
+
+.tree-label{
+cursor:pointer;
+padding:4px 6px;
+}
+
+.children{
+margin-left:15px;
+display:none;
+}
+
+.children.active{
+display:block;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+gap:12px;
+}
+
+.card{
+background:white;
+padding:10px;
+border-radius:6px;
+border:1px solid #ddd;
+}
+
+.pagination button{
+margin:2px;
+}
+
+.modal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:1000;
+}
+
+.modal.hidden{
+display:none;
+}
+
+.modal-content{
+background:white;
+padding:20px;
+width:500px;
+max-height:90vh;
+overflow:auto;
+border-radius:8px;
+}
+
+.modal-content input{
+width:100%;
+margin:4px 0;
+padding:6px;
+}
+
+body.dark{
+background:#121212;
+color:white;
+}
+
+body.dark .sidebar,
+body.dark .card,
+body.dark .modal-content{
+background:#1e1e1e;
+color:white;
+}
