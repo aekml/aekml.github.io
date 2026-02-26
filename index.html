@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Electricity Distribution Utility - Official Directory</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0b3d91">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<style>
+body{margin:0;font-family:Segoe UI, Arial;background:#f2f4f7;}
+.gov-topbar{background:#ff9933;height:6px;}
+.gov-header{background:#0b3d91;color:white;padding:12px 20px;display:flex;justify-content:space-between;}
+.container{display:flex;height:calc(100vh - 120px);}
+.sidebar{width:35%;background:white;overflow:auto;padding:15px;border-right:3px solid #0b3d91;}
+.map{flex:1;} #map{height:100%;}
+.search-box{width:100%;padding:8px;margin-bottom:12px;}
+.tree ul{list-style:none;padding-left:15px;}
+.tree span{cursor:pointer;font-weight:600;color:#0b3d91;}
+.contact{background:#f8fafc;padding:6px;margin-top:4px;border-left:3px solid #ff9933;font-size:13px;}
+button{font-size:11px;padding:3px 6px;margin-left:4px;border:none;border-radius:3px;}
+.btn-copy{background:#198754;color:white;}
+.btn-mail{background:#0d6efd;color:white;}
+.btn-map{background:#6c757d;color:white;}
+.footer{background:#0b3d91;color:white;text-align:center;padding:8px;font-size:12px;}
+</style>
+</head>
+
+<body>
+
+<div class="gov-topbar"></div>
+<div class="gov-header">
+<div><strong>Electricity Distribution Utility</strong></div>
+<div>Government of India</div>
+</div>
+
+<div class="container">
+<div class="sidebar">
+<input type="text" id="searchBox" class="search-box" placeholder="Search...">
+<div id="hierarchy" class="tree"></div>
+</div>
+<div class="map"><div id="map"></div></div>
+</div>
+
+<div class="footer">© 2026 Electricity Distribution Utility</div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js');
+}
+
+let contacts=[]; let markers=[];
+let map=L.map('map').setView([20.5937,78.9629],5);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
+
+fetch("data/contacts.json").then(r=>r.json()).then(d=>{
+contacts=d; buildHierarchy(d); plotMarkers(d);
+});
+
+function plotMarkers(data){
+markers.forEach(m=>map.removeLayer(m)); markers=[];
+data.forEach(c=>{
+if(!c.lat||!c.lng) return;
+let marker=L.marker([c.lat,c.lng]).addTo(map);
+marker.bindPopup(`<b>${c.name}</b><br>${c.designation}<br>${c.address}`);
+markers.push(marker);
+});
+}
+
+function buildHierarchy(data){
+let tree={};
+data.forEach(c=>{
+tree[c.zone]??={};
+tree[c.zone][c.circle]??={};
+tree[c.zone][c.circle][c.division]??={};
+tree[c.zone][c.circle][c.division][c.subdivision]??=[];
+tree[c.zone][c.circle][c.division][c.subdivision].push(c);
+});
+renderTree(tree);
+}
+
+function renderTree(tree){
+let container=document.getElementById("hierarchy");
+container.innerHTML="";
+Object.keys(tree).forEach(zone=>{
+let zoneNode=createNode(zone);
+Object.keys(tree[zone]).forEach(circle=>{
+let circleNode=createNode(circle);
+Object.keys(tree[zone][circle]).forEach(div=>{
+let divNode=createNode(div);
+Object.keys(tree[zone][circle][div]).forEach(sub=>{
+let subNode=createNode(sub);
+tree[zone][circle][div][sub].forEach(c=>{
+let li=document.createElement("li");
+li.className="contact";
+li.innerHTML=`${c.name} (${c.designation})
+<button class="btn-copy" onclick="navigator.clipboard.writeText('${c.mobile}')">Copy</button>
+<button class="btn-mail" onclick="window.location='mailto:${c.email}'">Mail</button>
+<button class="btn-map" onclick="map.setView([${c.lat},${c.lng}],13)">Map</button>`;
+subNode.querySelector("ul").appendChild(li);
+});
+divNode.querySelector("ul").appendChild(subNode);
+});
+circleNode.querySelector("ul").appendChild(divNode);
+});
+zoneNode.querySelector("ul").appendChild(circleNode);
+});
+container.appendChild(zoneNode);
+});
+}
+
+function createNode(text){
+let li=document.createElement("li");
+li.innerHTML=`<span>▸ ${text}</span><ul style="display:none;"></ul>`;
+li.querySelector("span").onclick=()=>{
+let ul=li.querySelector("ul");
+ul.style.display=ul.style.display==="none"?"block":"none";
+};
+return li;
+}
+
+searchBox.oninput=()=>{
+let term=searchBox.value.toLowerCase();
+let filtered=contacts.filter(c=>
+c.name.toLowerCase().includes(term)||
+c.mobile.includes(term)||
+c.email.toLowerCase().includes(term)||
+c.designation.toLowerCase().includes(term));
+buildHierarchy(filtered); plotMarkers(filtered);
+};
+</script>
+</body>
+</html>
