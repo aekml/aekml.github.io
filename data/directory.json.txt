@@ -1,0 +1,37 @@
+{
+  "offices": [
+    {
+      "name": "Ravi Kumar",
+      "designation": "Chief Engineer",
+      "zone": "North Zone",
+      "circle": "",
+      "division": "",
+      "subdivision": "",
+      "section": "",
+      "mobile": "9123456789",
+      "email": "ravi.kumar@utility.com"
+    },
+    {
+      "name": "Suresh Sharma",
+      "designation": "Superintending Engineer",
+      "zone": "North Zone",
+      "circle": "Metro Circle",
+      "division": "",
+      "subdivision": "",
+      "section": "",
+      "mobile": "9234567890",
+      "email": "suresh.sharma@utility.com"
+    },
+    {
+      "name": "Manoj Patel",
+      "designation": "Section Officer",
+      "zone": "North Zone",
+      "circle": "Metro Circle",
+      "division": "Division 1",
+      "subdivision": "Subdivision 1",
+      "section": "Section 1",
+      "mobile": "9567890123",
+      "email": "manoj.patel@utility.com"
+    }
+  ]
+}
