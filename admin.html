@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin Console - Contact Directory</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+body{font-family:Arial;padding:20px;background:#f4f6f8;}
+table{width:100%;border-collapse:collapse;background:white;}
+th,td{border:1px solid #ddd;padding:8px;}
+button{padding:6px 10px;margin:5px;}
+</style>
+</head>
+<body>
+<h2>Admin - Contact Directory</h2>
+<input type="file" id="excelFile">
+<button onclick="loadExcel()">Bulk Import</button>
+<button onclick="downloadJSON()">Download JSON</button>
+<table id="table">
+<thead>
+<tr>
+<th>Name</th><th>Designation</th><th>Office</th>
+<th>Address</th><th>Mobile</th><th>Email</th><th>Action</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+<script>
+function addRow(data={}){
+let tr=document.createElement("tr");
+["name","designation","office","address","mobile","email"].forEach(key=>{
+let td=document.createElement("td");
+let input=document.createElement("input");
+input.value=data[key]||"";
+td.append(input);
+tr.append(td);
+});
+let action=document.createElement("td");
+let del=document.createElement("button");
+del.innerText="Delete";
+del.onclick=()=>tr.remove();
+action.append(del);
+tr.append(action);
+table.querySelector("tbody").append(tr);
+}
+function loadExcel(){
+let file=excelFile.files[0];
+if(!file)return;
+let reader=new FileReader();
+reader.onload=e=>{
+let wb=XLSX.read(e.target.result,{type:"binary"});
+let json=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+table.querySelector("tbody").innerHTML="";
+json.forEach(r=>addRow(r));
+};
+reader.readAsBinaryString(file);
+}
+function downloadJSON(){
+let rows=document.querySelectorAll("tbody tr");
+let data=[];
+rows.forEach(r=>{
+let inputs=r.querySelectorAll("input");
+data.push({
+name:inputs[0].value,
+designation:inputs[1].value,
+office:inputs[2].value,
+address:inputs[3].value,
+mobile:inputs[4].value,
+email:inputs[5].value
+});
+});
+let blob=new Blob([JSON.stringify(data,null,2)]);
+let a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download="contacts.json";
+a.click();
+}
+addRow();
+</script>
+</body>
+</html>

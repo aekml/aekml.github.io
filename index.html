@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Electricity Utility Contact Directory</title>
+<style>
+body{font-family:Arial;background:#f4f6f8;margin:0;padding:20px;}
+.header{background:#004080;color:white;padding:15px;border-radius:6px;margin-bottom:20px;}
+.search-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px;}
+input,select{padding:8px;border:1px solid #ccc;border-radius:4px;}
+.contact-card{background:white;padding:15px;border-radius:6px;box-shadow:0 0 5px rgba(0,0,0,0.1);margin-bottom:12px;}
+.card-actions{margin-top:10px;display:flex;gap:10px;}
+button{padding:6px 10px;border:none;border-radius:4px;cursor:pointer;}
+.copy-btn{background:#28a745;color:white;}
+.mail-btn{background:#007bff;color:white;}
+.small{font-size:13px;color:#555;}
+</style>
+</head>
+<body>
+<div class="header"><h2>Electricity Distribution Utility - Contact Directory</h2></div>
+
+<div class="search-bar">
+<input type="text" id="searchInput" placeholder="Search by name, mobile, email, designation">
+<select id="officeFilter">
+<option value="">All Offices</option>
+<option>Section Office</option>
+<option>Subdivision</option>
+<option>Division</option>
+<option>Circle</option>
+<option>Zonal Office</option>
+</select>
+<select id="designationFilter">
+<option value="">All Designations</option>
+<option>Section Officer</option>
+<option>Subdivisional Officer</option>
+<option>Divisional Officer</option>
+<option>Superintending Engineer</option>
+<option>Chief Engineer</option>
+</select>
+</div>
+
+<div id="contactList"></div>
+
+<script>
+let contacts=[];
+fetch("data/contacts.json")
+.then(res=>res.json())
+.then(data=>{contacts=data;renderContacts(data);});
+
+function renderContacts(data){
+contactList.innerHTML="";
+data.forEach(c=>{
+let card=document.createElement("div");
+card.className="contact-card";
+card.innerHTML=`
+<strong>${c.name}</strong><br>
+<span class="small">${c.designation}</span><br>
+<span>${c.office}</span><br>
+<span>${c.address}</span><br>
+Mobile: ${c.mobile}<br>
+Email: ${c.email}`;
+let actions=document.createElement("div");
+actions.className="card-actions";
+let copy=document.createElement("button");
+copy.className="copy-btn";
+copy.innerText="Copy Phone";
+copy.onclick=()=>{navigator.clipboard.writeText(c.mobile);alert("Phone copied!");};
+let mail=document.createElement("button");
+mail.className="mail-btn";
+mail.innerText="Send Email";
+mail.onclick=()=>{window.location.href=`mailto:${c.email}`;};
+actions.append(copy,mail);
+card.append(actions);
+contactList.append(card);
+});
+}
+
+searchInput.oninput=applyFilters;
+officeFilter.onchange=applyFilters;
+designationFilter.onchange=applyFilters;
+
+function applyFilters(){
+let term=searchInput.value.toLowerCase();
+let filtered=contacts.filter(c=>{
+return (
+(c.name.toLowerCase().includes(term) ||
+c.mobile.includes(term) ||
+c.email.toLowerCase().includes(term) ||
+c.designation.toLowerCase().includes(term)) &&
+(!officeFilter.value || c.office===officeFilter.value) &&
+(!designationFilter.value || c.designation===designationFilter.value)
+);
+});
+renderContacts(filtered);
+}
+</script>
+</body>
+</html>
